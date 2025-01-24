@@ -10,7 +10,6 @@ public interface UserService {
 
   List<UserEntity> findAll();
 
-  UserEntity findOne(String username);
+  UserEntity findByUsername(String username);
 
-  UserEntity createEmployee(UserDto user);
 }

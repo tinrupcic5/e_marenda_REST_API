@@ -4,6 +4,8 @@ import com.jamapi.emarenda.rbac.entity.UserEntity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @NoArgsConstructor
 @Data
 public class UserDto {
@@ -13,6 +15,10 @@ public class UserDto {
   private String email;
   private String phone;
   private String name;
+  private String lastName;
+  private Set<String> roles;
+  private long schoolId;
+  private long gradeId;
 
   public UserEntity getUserFromDto() {
     UserEntity userEntity = new UserEntity();
@@ -21,6 +27,7 @@ public class UserDto {
     userEntity.setEmail(email);
     userEntity.setPhone(phone);
     userEntity.setName(name);
+    userEntity.setLastName(lastName);
 
     return userEntity;
   }

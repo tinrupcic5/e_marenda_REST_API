@@ -49,37 +49,25 @@ public class UserController {
   }
 
   @PostMapping("/register")
-  public UserEntity saveUser(@RequestBody UserDto user) {
+  public UserEntity registerUser(@RequestBody UserDto user) {
     return userService.save(user);
   }
 
   @PreAuthorize("hasRole('ADMIN')")
-  @GetMapping("/adminping")
-  public String adminPing() {
-    return "Only Admins Can Read This";
-  }
-
-  @PreAuthorize("hasRole('USER')")
-  @GetMapping("/userping")
-  public String userPing() {
-    return "Any User Can Read This";
-  }
-
-  @PreAuthorize("hasRole('ADMIN')")
   @PostMapping("/create/employee")
-  public UserEntity createEmployee(@RequestBody UserDto user) {
-    return userService.createEmployee(user);
+  public UserEntity createUser(@RequestBody UserDto user) {
+    return userService.save(user);
   }
 
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasRole('ADMIN') or hasRole('KITCHEN')")
   @GetMapping("/find/all")
   public List<UserEntity> getAllList() {
     return userService.findAll();
   }
 
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasRole('ADMIN') or hasRole('KITCHEN')")
   @GetMapping("/find/by/username")
-  public UserEntity getAllList(@RequestParam String username) {
-    return userService.findOne(username);
+  public UserEntity findByUsername(@RequestParam String username) {
+    return userService.findByUsername(username);
   }
 }

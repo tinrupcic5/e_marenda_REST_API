@@ -27,6 +27,9 @@ public class TokenProvider implements Serializable {
   @Value("${jwt.authorities.key}")
   public String AUTHORITIES_KEY;
 
+  @Value("${jwt.name.string}")
+  public String APP_NAME;
+
   public String getUsernameFromToken(String token) {
     return getClaimFromToken(token, Claims::getSubject);
   }
@@ -58,6 +61,7 @@ public class TokenProvider implements Serializable {
     return Jwts.builder()
         .setSubject(authentication.getName())
         .claim(AUTHORITIES_KEY, authorities)
+            .claim("appName", APP_NAME)
         .setIssuedAt(new Date(System.currentTimeMillis()))
         .setExpiration(new Date(System.currentTimeMillis() + TOKEN_VALIDITY * 1000))
         .signWith(SignatureAlgorithm.HS256, SIGNING_KEY)

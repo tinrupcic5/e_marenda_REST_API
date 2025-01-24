@@ -3,11 +3,11 @@ spring:
     database: POSTGRESQL
     show-sql: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: none
   datasource:
-    url: jdbc:postgresql://localhost:15433/demo_db_local
-    username: demo
-    password: demo
+    url: jdbc:postgresql://localhost:15433/emarenda_db_local?currentSchema=dbo
+    username: emarenda
+    password: emarenda
     driverClassName: org.postgresql.Driver
   sql:
     init:
@@ -35,3 +35,5 @@ jwt:
     key: "permissions"
   header:
     string: "Authorization"
+  name:
+    string: "emarenda"

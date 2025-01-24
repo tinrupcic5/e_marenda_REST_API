@@ -1,16 +1,16 @@
 package com.jamapi.emarenda.rbac.service.impl;
 
 import com.jamapi.emarenda.rbac.entity.RoleEntity;
-import com.jamapi.emarenda.rbac.repository.RoleRepository;
+import com.jamapi.emarenda.rbac.repository.RoleJpaRepository;
 import com.jamapi.emarenda.rbac.service.RoleService;
 import org.springframework.stereotype.Service;
 
 @Service(value = "roleService")
 public class RoleServiceImpl implements RoleService {
 
-  private final RoleRepository roleDao;
+  private final RoleJpaRepository roleDao;
 
-  public RoleServiceImpl(RoleRepository roleDao) {
+  public RoleServiceImpl(RoleJpaRepository roleDao) {
     this.roleDao = roleDao;
   }
 

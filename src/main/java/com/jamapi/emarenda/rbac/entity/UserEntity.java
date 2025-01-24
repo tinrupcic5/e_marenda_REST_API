@@ -1,8 +1,14 @@
 package com.jamapi.emarenda.rbac.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.jamapi.emarenda.domain.grade.entity.GradeEntity;
+import com.jamapi.emarenda.domain.school.entity.SchoolEntity;
 import jakarta.persistence.*;
+
 import java.util.Set;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -20,11 +26,27 @@ public class UserEntity {
 
   @Column @JsonIgnore private String password;
 
-  @Column private String email;
+  @Column
+  @Email(message = "Email should be valid")
+  private String email;
 
-  @Column private String phone;
+  @Column
+  @Pattern(regexp = "^[0-9]{1,14}$", message = "Phone number should be no more than 14 digits")
+  private String phone;
 
   @Column private String name;
+  @Column private String lastName;
+
+  public void setName(String name) {
+    if (name != null && !name.isEmpty()) {
+      this.name = name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
+    }
+  }
+  public void setLastName(String lastName) {
+    if (lastName != null && !lastName.isEmpty()) {
+      this.lastName = lastName.substring(0, 1).toUpperCase() + lastName.substring(1).toLowerCase();
+    }
+  }
 
   @ManyToMany(
       fetch = FetchType.EAGER,
@@ -34,4 +56,12 @@ public class UserEntity {
       joinColumns = {@JoinColumn(name = "USER_ID")},
       inverseJoinColumns = {@JoinColumn(name = "ROLE_ID")})
   private Set<RoleEntity> roleEntities;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "school_id")
+  private SchoolEntity school;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "grade_id")
+  private GradeEntity grade;
 }
