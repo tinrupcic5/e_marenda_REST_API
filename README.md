@@ -28,27 +28,27 @@
     - Built for scalability and easy integration with the frontend applications.
 
 ---
-```bash
-                               +------------------+       +-----------------------+
-                               |     User         |<----->|   Kitchen             |
-                               | (Parent,Student) |       |   (Meal planning)     |
-                               |                  |       |                       |
-                               +--------+---------+       +-----------------------+
-                                        |                        |
-                                        | marks participation    | monitors participation
-                                        v                        v
-                         +------------------------------+      +-----------------------+
-                         |  Lunch Participation System  |----->|  Meal Planning (Based |
-                         |    (Mark attendance for      |      |   on participation)   |
-                         |     students for lunch)      |      +-----------------------+
-                         +------------------------------+                |
-                                 |                                       |
-                                 | fetches data                          |
-                                 v                                       v
-                         +-----------------------------+       +----------------------+
-                         |    Admin Tools (Receipts &  |       |  Kitchen Dashboard   |
-                         |    Reports, Meal Consumption)|<---->|    (Real-time data)  |
-                         +-----------------------------+       +----------------------+
+```commandline
+                     +------------------+       +-----------------------+
+                     |     User         |<----->|   Kitchen             |
+                     | (Parent,Student) |       |   (Meal planning)     |
+                     |                  |       |                       |
+                     +--------+---------+       +-----------------------+
+                              |                        |
+                              | marks participation    | monitors participation
+                              v                        v
+               +------------------------------+      +-----------------------+
+               |  Lunch Participation System  |----->|  Meal Planning (Based |
+               |    (Mark attendance for      |      |   on participation)   |
+               |     students for lunch)      |      +-----------------------+
+               +------------------------------+                |
+                       |                                       |
+                       | fetches data                          |
+                       v                                       v
+               +------------------------------+       +----------------------+
+               |    Admin Tools (Receipts &   |       |  Kitchen Dashboard   |
+               |    Reports, Meal Consumption)|<----->|    (Real-time data)  |
+               +------------------------------+       +----------------------+
 
 ```
 ---
