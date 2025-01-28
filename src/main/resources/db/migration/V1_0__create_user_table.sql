@@ -39,3 +39,14 @@ CREATE TABLE user_roles (
                             CONSTRAINT FK_user_roles_role FOREIGN KEY (role_id) REFERENCES app_role (id) ON DELETE CASCADE
 );
 
+-- Table to track user activities (logins, lunch attendance, and other actions)
+CREATE TABLE user_activity (
+                               id BIGSERIAL PRIMARY KEY,                   -- Unique ID for the activity
+                               user_id BIGINT NOT NULL,                    -- The user associated with the activity
+                               action_type VARCHAR(50) NOT NULL,           -- The type of action (e.g., "login", "lunch", "button_click")
+                               action_description VARCHAR(255),            -- Optional description about the action (e.g., "User clicked 'Going to lunch'")
+                               action_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, -- Timestamp of the action
+                               CONSTRAINT FK_user_activity FOREIGN KEY (user_id) REFERENCES app_user(id) ON DELETE CASCADE
+);
+
+

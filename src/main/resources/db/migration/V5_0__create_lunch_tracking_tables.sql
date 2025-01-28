@@ -48,3 +48,13 @@ CREATE TABLE student_meal_preference (
                                          comment VARCHAR(255) NOT NULL, -- Meal preference or Allergies, e.g., "Vegetarian"
                                          CONSTRAINT FK_meal_preference_user FOREIGN KEY (user_id) REFERENCES app_user (id) ON DELETE CASCADE
 );
+
+-- Table to store meal cost for each lunch day, including a reference to the school
+CREATE TABLE lunch_day_cost (
+                                id BIGSERIAL PRIMARY KEY,               -- Unique ID for the record
+                                school_id BIGINT NOT NULL,              -- Foreign key linking to the school table
+                                meal_cost DECIMAL(10, 2) NOT NULL,      -- The cost of the meal per day
+                                CONSTRAINT FK_lunch_day_cost_school FOREIGN KEY (school_id) REFERENCES e_school(id) ON DELETE CASCADE
+);
+
+
