@@ -1,8 +1,7 @@
-package com.jamapi.emarenda.domain.grade.service.impl;
+package com.jamapi.emarenda.domain.grade.service;
 
 import com.jamapi.emarenda.domain.grade.entity.GradeEntity;
 import com.jamapi.emarenda.domain.grade.repository.GradeRepository;
-import com.jamapi.emarenda.domain.grade.service.GradeService;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -64,4 +64,5 @@ public class UserEntity {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "grade_id")
   private GradeEntity grade;
+
 }

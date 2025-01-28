@@ -1,8 +1,7 @@
-package com.jamapi.emarenda.domain.school.service.impl;
+package com.jamapi.emarenda.domain.school.service;
 
 import com.jamapi.emarenda.domain.school.entity.SchoolEntity;
 import com.jamapi.emarenda.domain.school.repository.SchoolRepository;
-import com.jamapi.emarenda.domain.school.service.SchoolService;
 import org.springframework.stereotype.Service;
 
 @Service
