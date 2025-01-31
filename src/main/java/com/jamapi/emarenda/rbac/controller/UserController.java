@@ -7,6 +7,8 @@ import com.jamapi.emarenda.rbac.model.LoginUser;
 import com.jamapi.emarenda.rbac.model.UserDto;
 import com.jamapi.emarenda.rbac.service.UserService;
 import java.util.List;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -37,7 +39,7 @@ public class UserController {
   }
 
   @PostMapping("/authenticate")
-  public ResponseEntity<AuthToken> generateToken(@RequestBody LoginUser loginUser)
+  public ResponseEntity<AuthToken> login(@RequestBody LoginUser loginUser)
       throws AuthenticationException {
     final Authentication authentication =
         authenticationManager.authenticate(
@@ -49,15 +51,21 @@ public class UserController {
   }
 
   @PostMapping("/register")
-  public UserEntity registerUser(@RequestBody UserDto user) {
-    return userService.save(user);
+  public ResponseEntity<UserEntity> register(@RequestBody UserDto user) {
+    return getUserEntityResponseEntity(user);
   }
 
   @PreAuthorize("hasRole('ADMIN')")
-  @PostMapping("/create/employee")
-  public UserEntity createUser(@RequestBody UserDto user) {
-    return userService.save(user);
+  @PostMapping("/create")
+  public ResponseEntity<UserEntity> createUser(@RequestBody UserDto user) {
+    return getUserEntityResponseEntity(user);
   }
+
+  private ResponseEntity<UserEntity> getUserEntityResponseEntity(UserDto user) {
+    UserEntity savedUser = userService.save(user);
+    return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
+  }
+
 
   @PreAuthorize("hasRole('ADMIN') or hasRole('KITCHEN')")
   @GetMapping("/find/all")

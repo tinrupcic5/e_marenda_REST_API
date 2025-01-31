@@ -3,8 +3,10 @@ package com.jamapi.emarenda.rbac.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jamapi.emarenda.domain.grade.entity.GradeEntity;
 import com.jamapi.emarenda.domain.school.entity.SchoolEntity;
+import com.jamapi.emarenda.domain.user_activity.entity.UserActivityEntity;
 import jakarta.persistence.*;
 
+import java.util.List;
 import java.util.Set;
 
 import jakarta.validation.constraints.Email;
@@ -64,5 +66,8 @@ public class UserEntity {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "grade_id")
   private GradeEntity grade;
+
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<UserActivityEntity> activities;
 
 }

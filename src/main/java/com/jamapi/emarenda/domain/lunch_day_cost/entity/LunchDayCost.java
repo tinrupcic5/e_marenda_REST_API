@@ -22,7 +22,7 @@ public class LunchDayCost {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "school_id", nullable = false, foreignKey = @ForeignKey(name = "FK_lunch_day_cost_school"))
+    @JoinColumn(name = "school_id", nullable = false)
     private SchoolEntity school;
 
     @Column(name = "meal_cost", nullable = false, precision = 10, scale = 2)
