@@ -63,11 +63,12 @@ public class UserEntity {
   @JoinColumn(name = "school_id")
   private SchoolEntity school;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "grade_id")
+  @ManyToOne(fetch = FetchType.LAZY, optional = true)
+  @JoinColumn(name = "grade_id", nullable = true)
   private GradeEntity grade;
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  @JsonIgnore
   private List<UserActivityEntity> activities;
 
 }

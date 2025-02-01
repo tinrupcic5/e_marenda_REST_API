@@ -26,7 +26,7 @@ CREATE TABLE app_user (
                           name VARCHAR(255),
                           last_name VARCHAR(255),
                           school_id BIGINT,
-                          grade_id BIGINT,
+                          grade_id BIGINT NULL,
                           CONSTRAINT FK_user_school FOREIGN KEY (school_id) REFERENCES e_school (id) ON DELETE SET NULL,
                           CONSTRAINT FK_user_grade FOREIGN KEY (grade_id) REFERENCES e_grade (id) ON DELETE SET NULL
 );

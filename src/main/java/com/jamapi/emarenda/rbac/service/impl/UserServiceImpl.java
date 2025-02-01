@@ -11,13 +11,15 @@ import com.jamapi.emarenda.rbac.repository.UserJpaRepository;
 import com.jamapi.emarenda.rbac.service.RoleService;
 import com.jamapi.emarenda.rbac.service.UserService;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -27,32 +29,35 @@ import org.springframework.stereotype.Service;
 @Service(value = "userService")
 public class UserServiceImpl implements UserDetailsService, UserService {
 
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(UserServiceImpl.class);
+
     private final RoleService roleService;
 
     private final SchoolService schoolService;
 
     private final GradeService gradeService;
 
-    private final UserJpaRepository userDao;
+    private final UserJpaRepository userJpaRepository;
 
     private final BCryptPasswordEncoder bcryptEncoder;
 
     public UserServiceImpl(
-            RoleService roleService, SchoolService schoolService, GradeService gradeService, UserJpaRepository userDao, BCryptPasswordEncoder bcryptEncoder) {
+            RoleService roleService, SchoolService schoolService, GradeService gradeService, UserJpaRepository userJpaRepository, BCryptPasswordEncoder bcryptEncoder) {
         this.roleService = roleService;
         this.schoolService = schoolService;
         this.gradeService = gradeService;
-        this.userDao = userDao;
+        this.userJpaRepository = userJpaRepository;
         this.bcryptEncoder = bcryptEncoder;
     }
 
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity userEntity = userDao.findByUsername(username);
-        if (userEntity == null) {
-            throw new UsernameNotFoundException("Invalid username or password.");
-        }
-        return new org.springframework.security.core.userdetails.User(
-                userEntity.getUsername(), userEntity.getPassword(), getAuthority(userEntity));
+        UserEntity user = userJpaRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Invalid username or password."));
+
+        return new User(
+                user.getUsername(), user.getPassword(), getAuthority(user));
     }
 
     private Set<SimpleGrantedAuthority> getAuthority(UserEntity userEntity) {
@@ -64,17 +69,18 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     public List<UserEntity> findAll() {
         List<UserEntity> list = new ArrayList<>();
-        userDao.findAll().iterator().forEachRemaining(list::add);
+        userJpaRepository.findAll().iterator().forEachRemaining(list::add);
         return list;
     }
 
     @Override
     public UserEntity findByUsername(String username) {
-        return userDao.findByUsername(username);
+        return userJpaRepository.findByUsername(username).orElseThrow();
     }
 
     @Override
-    public UserEntity save(UserDto user) {
+    public void save(UserDto user) {
+        LOGGER.info("Saving user: {}", user.getUsername());
         UserEntity nUserEntity = user.getUserFromDto();
 
         nUserEntity.setPassword(bcryptEncoder.encode(user.getPassword()));
@@ -91,8 +97,24 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         nUserEntity.setSchool(school);
         nUserEntity.setGrade(grade);
 
-        return userDao.save(nUserEntity);
+        userJpaRepository.save(nUserEntity);
+        LOGGER.info("User saved: {}", nUserEntity.getUsername());
     }
 
+    @Override
+    public UserEntity getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new IllegalStateException("No authenticated user found");
+        }
+
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserDetails userDetails) {
+            Optional<UserEntity> user = userJpaRepository.findByUsername(userDetails.getUsername());
+            return user.orElseThrow(() -> new IllegalArgumentException("User not found"));
+        }
+
+        throw new IllegalStateException("Unable to fetch user details");
+    }
 }

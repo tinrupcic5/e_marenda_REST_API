@@ -1,5 +1,7 @@
 package com.jamapi.emarenda.rbac.controller;
 
+import com.jamapi.emarenda.domain.user_activity.ActionType;
+import com.jamapi.emarenda.domain.user_activity.service.UserActivityService;
 import com.jamapi.emarenda.rbac.config.TokenProvider;
 import com.jamapi.emarenda.rbac.entity.UserEntity;
 import com.jamapi.emarenda.rbac.model.AuthToken;
@@ -28,14 +30,16 @@ public class UserController {
   private final TokenProvider jwtTokenUtil;
 
   private final UserService userService;
+  private final UserActivityService userActivityService;
 
   public UserController(
-      AuthenticationManager authenticationManager,
-      TokenProvider jwtTokenUtil,
-      UserService userService) {
+          AuthenticationManager authenticationManager,
+          TokenProvider jwtTokenUtil,
+          UserService userService, UserActivityService userActivityService) {
     this.authenticationManager = authenticationManager;
     this.jwtTokenUtil = jwtTokenUtil;
     this.userService = userService;
+      this.userActivityService = userActivityService;
   }
 
   @PostMapping("/authenticate")
@@ -51,21 +55,21 @@ public class UserController {
   }
 
   @PostMapping("/register")
-  public ResponseEntity<UserEntity> register(@RequestBody UserDto user) {
+  public ResponseEntity<HttpStatus> register(@RequestBody UserDto user) {
     return getUserEntityResponseEntity(user);
   }
 
   @PreAuthorize("hasRole('ADMIN')")
   @PostMapping("/create")
-  public ResponseEntity<UserEntity> createUser(@RequestBody UserDto user) {
+  public ResponseEntity<HttpStatus> createUser(@RequestBody UserDto user) {
+    userActivityService.logUserActivity(ActionType.REGISTER_STUDENT.name(), user.getUsername());
     return getUserEntityResponseEntity(user);
   }
 
-  private ResponseEntity<UserEntity> getUserEntityResponseEntity(UserDto user) {
-    UserEntity savedUser = userService.save(user);
-    return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
+  private ResponseEntity<HttpStatus> getUserEntityResponseEntity(UserDto user) {
+    userService.save(user);
+    return ResponseEntity.status(HttpStatus.CREATED).build();
   }
-
 
   @PreAuthorize("hasRole('ADMIN') or hasRole('KITCHEN')")
   @GetMapping("/find/all")

@@ -6,10 +6,11 @@ import java.util.List;
 
 public interface UserService {
 
-  UserEntity save(UserDto user);
+  void save(UserDto user);
 
   List<UserEntity> findAll();
 
   UserEntity findByUsername(String username);
 
+  UserEntity getCurrentUser();
 }
