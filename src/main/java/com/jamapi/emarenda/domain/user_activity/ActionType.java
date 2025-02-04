@@ -1,7 +1,7 @@
 package com.jamapi.emarenda.domain.user_activity;
 
 public enum ActionType {
-    REGISTER_STUDENT,
+    REGISTER,
     CREATE_USER,
     CREATE_MEAL,
     PRINT_PDF,

@@ -31,6 +31,17 @@ CREATE TABLE app_user (
                           CONSTRAINT FK_user_grade FOREIGN KEY (grade_id) REFERENCES e_grade (id) ON DELETE SET NULL
 );
 
+-- Create a new table to store the relationship between parents and children
+CREATE TABLE parent_child (
+                              id BIGSERIAL PRIMARY KEY,
+                              parent_id BIGINT NOT NULL,
+                              child_id BIGINT NOT NULL,
+                              CONSTRAINT FK_parent_child_parent FOREIGN KEY (parent_id) REFERENCES app_user(id) ON DELETE CASCADE,
+                              CONSTRAINT FK_parent_child_child FOREIGN KEY (child_id) REFERENCES app_user(id) ON DELETE CASCADE,
+                              CONSTRAINT unique_parent_child UNIQUE (parent_id, child_id) -- Ensures a unique relationship between a parent and child
+);
+
+
 CREATE TABLE user_roles (
                             user_id BIGINT NOT NULL,
                             role_id BIGINT NOT NULL,

@@ -77,7 +77,7 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<ResponseMessage> register(@RequestBody UserDto user) {
-        userActivityService.logUserActivity(ActionType.REGISTER_STUDENT.name(), user.getUsername());
+        userActivityService.logUserActivity(ActionType.REGISTER.name(), user.getUsername());
         return getUserEntityResponseEntity(user);
     }
 
