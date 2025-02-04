@@ -22,7 +22,6 @@ logging:
     org.hibernate.type.descriptor.sql.BasicBinder: ERROR
     org.hibernate: ERROR
     org.flywaydb: INFO
-    root: ERROR
 
 server:
   port: 8081

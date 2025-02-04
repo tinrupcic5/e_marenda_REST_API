@@ -79,7 +79,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public void save(UserDto user) {
+    public String save(UserDto user) {
         LOGGER.info("Saving user: {}", user.getUsername());
         UserEntity nUserEntity = user.getUserFromDto();
 
@@ -99,6 +99,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
         userJpaRepository.save(nUserEntity);
         LOGGER.info("User saved: {}", nUserEntity.getUsername());
+        return "User saved: " + nUserEntity.getUsername();
     }
 
     @Override

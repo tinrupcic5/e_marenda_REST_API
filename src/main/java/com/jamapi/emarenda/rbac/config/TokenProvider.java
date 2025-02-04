@@ -1,5 +1,6 @@
 package com.jamapi.emarenda.rbac.config;
 
+import com.jamapi.emarenda.exception.BlacklistedTokenException;
 import io.jsonwebtoken.*;
 import java.io.Serializable;
 import java.util.Arrays;
@@ -30,7 +31,13 @@ public class TokenProvider implements Serializable {
   @Value("${jwt.name.string}")
   public String APP_NAME;
 
-  public String getUsernameFromToken(String token) {
+  private TokenBlacklistService tokenBlacklistService;
+
+    public TokenProvider(TokenBlacklistService tokenBlacklistService) {
+        this.tokenBlacklistService = tokenBlacklistService;
+    }
+
+    public String getUsernameFromToken(String token) {
     return getClaimFromToken(token, Claims::getSubject);
   }
 
@@ -70,8 +77,14 @@ public class TokenProvider implements Serializable {
 
   public Boolean validateToken(String token, UserDetails userDetails) {
     final String username = getUsernameFromToken(token);
+
+    if (tokenBlacklistService.isTokenBlacklisted(token)) {
+      throw new BlacklistedTokenException("This token has been blacklisted. Please log in again.");
+    }
+
     return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
   }
+
 
   UsernamePasswordAuthenticationToken getAuthenticationToken(
       final String token, final UserDetails userDetails) {
