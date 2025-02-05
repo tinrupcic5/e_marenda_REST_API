@@ -12,7 +12,7 @@ import java.io.Serializable;
 @Setter
 @Entity
 @Table(name = "parent_child")
-public class ParentChild implements Serializable {
+public class ParentChildEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,7 +30,7 @@ public class ParentChild implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ParentChild that = (ParentChild) o;
+        ParentChildEntity that = (ParentChildEntity) o;
         return id.equals(that.id);
     }
 
