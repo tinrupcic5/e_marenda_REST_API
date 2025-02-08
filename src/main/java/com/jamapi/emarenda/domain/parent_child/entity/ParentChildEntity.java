@@ -3,7 +3,9 @@ package com.jamapi.emarenda.domain.parent_child.entity;
 import com.jamapi.emarenda.rbac.entity.UserEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.io.Serializable;
 
@@ -11,6 +13,8 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "parent_child")
 public class ParentChildEntity implements Serializable {
 
@@ -37,5 +41,19 @@ public class ParentChildEntity implements Serializable {
     @Override
     public int hashCode() {
         return id.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "ParentChildEntity{" +
+                "id=" + id +
+                ", parent=" + parent +
+                ", child=" + child +
+                '}';
+    }
+
+    public ParentChildEntity(UserEntity parent, UserEntity child) {
+        this.parent = parent;
+        this.child = child;
     }
 }

@@ -1,10 +1,12 @@
 package com.jamapi.emarenda.domain.school.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
 @Entity
 @Table(name = "e_school")
@@ -25,4 +27,5 @@ public class SchoolEntity {
 
     @Column(nullable = false, unique = true)
     private String oib;
+
 }
