@@ -2,7 +2,9 @@ package com.jamapi.emarenda.domain.school_holiday.entity;
 
 import com.jamapi.emarenda.domain.school.entity.SchoolEntity;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
@@ -11,6 +13,8 @@ import java.time.LocalDate;
 @Setter
 @Entity
 @Table(name = "school_holiday")
+@AllArgsConstructor
+@NoArgsConstructor
 public class SchoolHolidayEntity {
 
     @Id

@@ -1,6 +1,7 @@
 package com.jamapi.emarenda.rbac.model;
 
 import com.jamapi.emarenda.rbac.entity.UserEntity;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -8,6 +9,7 @@ import java.util.Set;
 
 @NoArgsConstructor
 @Data
+@AllArgsConstructor
 public class UserDto {
 
   private String username;
@@ -16,6 +18,7 @@ public class UserDto {
   private String phone;
   private String name;
   private String lastName;
+  private String oib;
   private Set<String> roles;
   private long schoolId;
   private long gradeId;
@@ -28,6 +31,7 @@ public class UserDto {
     userEntity.setPhone(phone);
     userEntity.setName(name);
     userEntity.setLastName(lastName);
+    userEntity.setOib(oib);
 
     return userEntity;
   }

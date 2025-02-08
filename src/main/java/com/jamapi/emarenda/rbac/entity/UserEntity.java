@@ -37,7 +37,11 @@ public class UserEntity {
   private String phone;
 
   @Column private String name;
+
   @Column private String lastName;
+
+  @Column(nullable = false, unique = true)
+  private String oib;
 
   public void setName(String name) {
     if (name != null && !name.isEmpty()) {

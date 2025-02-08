@@ -52,4 +52,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
+    // Handle CSV Processing Errors
+    @ExceptionHandler(CsvProcessingException.class)
+    public ResponseEntity<ResponseMessage> handleCsvProcessingException(CsvProcessingException ex) {
+        ResponseMessage response = new ResponseMessage(
+                HttpStatus.BAD_REQUEST,
+                "CSV Processing Error: " + ex.getMessage());
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
 }

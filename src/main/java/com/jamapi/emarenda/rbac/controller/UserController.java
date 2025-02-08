@@ -74,13 +74,6 @@ public class UserController {
         return ResponseEntity.ok(new ResponseMessage(HttpStatus.OK, "User logged out successfully."));
     }
 
-
-    @PostMapping("/register")
-    public ResponseEntity<ResponseMessage> register(@RequestBody UserDto user) {
-        userActivityService.logUserActivity(ActionType.REGISTER.name(), user.getUsername());
-        return getUserEntityResponseEntity(user);
-    }
-
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
     public ResponseEntity<ResponseMessage> createUser(@RequestBody UserDto user) {
@@ -89,7 +82,7 @@ public class UserController {
     }
 
     private ResponseEntity<ResponseMessage> getUserEntityResponseEntity(UserDto user) {
-        var message = userService.save(user);
+        var message = userService.saveUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage(HttpStatus.CREATED,message));
     }
 

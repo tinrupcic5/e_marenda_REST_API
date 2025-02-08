@@ -3,7 +3,9 @@ import com.jamapi.emarenda.domain.lunch_day.entity.LunchDayEntity;
 import com.jamapi.emarenda.rbac.entity.UserEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
@@ -11,6 +13,8 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "lunch_attendance")
+@AllArgsConstructor
+@NoArgsConstructor
 public class LunchAttendanceEntity {
 
     @Id
