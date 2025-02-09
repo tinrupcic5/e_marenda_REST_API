@@ -23,4 +23,19 @@ public class UserCsvDto {
   private long schoolId;
   private long gradeId;
   private Set<String> childOib;
+
+  public UserDto toUserDto() {
+    UserDto userDto = new UserDto();
+    userDto.setUsername(username);
+    userDto.setPassword(password);
+    userDto.setEmail(email);
+    userDto.setPhone(phone);
+    userDto.setName(name);
+    userDto.setLastName(lastName);
+    userDto.setOib(oib);
+    userDto.setRoles(roles);
+    userDto.setSchoolId(schoolId);
+    userDto.setGradeId(gradeId);
+    return userDto;
+  }
 }

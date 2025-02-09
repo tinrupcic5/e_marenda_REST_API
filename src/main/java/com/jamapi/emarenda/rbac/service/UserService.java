@@ -2,6 +2,8 @@ package com.jamapi.emarenda.rbac.service;
 
 import com.jamapi.emarenda.rbac.entity.UserEntity;
 import com.jamapi.emarenda.rbac.model.UserDto;
+import com.jamapi.emarenda.rbac.model.UserModel;
+
 import java.util.List;
 
 public interface UserService {
@@ -13,4 +15,6 @@ public interface UserService {
   UserEntity findByUsername(String username);
 
   UserEntity getCurrentUser();
+
+  UserModel findByOib(String oib);
 }

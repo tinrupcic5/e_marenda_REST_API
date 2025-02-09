@@ -4,9 +4,11 @@ import com.jamapi.emarenda.domain.grade.entity.GradeEntity;
 import com.jamapi.emarenda.domain.grade.service.GradeService;
 import com.jamapi.emarenda.domain.school.entity.SchoolEntity;
 import com.jamapi.emarenda.domain.school.service.SchoolService;
+import com.jamapi.emarenda.mapper.UserMapper;
 import com.jamapi.emarenda.rbac.entity.RoleEntity;
 import com.jamapi.emarenda.rbac.entity.UserEntity;
 import com.jamapi.emarenda.rbac.model.UserDto;
+import com.jamapi.emarenda.rbac.model.UserModel;
 import com.jamapi.emarenda.rbac.repository.UserJpaRepository;
 import com.jamapi.emarenda.rbac.service.RoleService;
 import com.jamapi.emarenda.rbac.service.UserService;
@@ -42,13 +44,16 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     private final BCryptPasswordEncoder bcryptEncoder;
 
+    private final UserMapper userMapper;
+
     public UserServiceImpl(
-            RoleService roleService, SchoolService schoolService, GradeService gradeService, UserJpaRepository userJpaRepository, BCryptPasswordEncoder bcryptEncoder) {
+            RoleService roleService, SchoolService schoolService, GradeService gradeService, UserJpaRepository userJpaRepository, BCryptPasswordEncoder bcryptEncoder, UserMapper userMapper) {
         this.roleService = roleService;
         this.schoolService = schoolService;
         this.gradeService = gradeService;
         this.userJpaRepository = userJpaRepository;
         this.bcryptEncoder = bcryptEncoder;
+        this.userMapper = userMapper;
     }
 
     @Override
@@ -117,5 +122,10 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         }
 
         throw new IllegalStateException("Unable to fetch user details");
+    }
+
+    @Override
+    public UserModel findByOib(String oib) {
+        return userMapper.toModel(userJpaRepository.findByOib(oib).orElseThrow());
     }
 }

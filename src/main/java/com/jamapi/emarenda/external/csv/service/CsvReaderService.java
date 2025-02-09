@@ -1,8 +1,12 @@
 package com.jamapi.emarenda.external.csv.service;
 
+import com.jamapi.emarenda.domain.parent_child.model.ParentChildModel;
+import com.jamapi.emarenda.domain.parent_child.service.ParentChildService;
 import com.jamapi.emarenda.exception.CsvProcessingException;
 import com.jamapi.emarenda.external.csv.UserCsvModel;
 import com.jamapi.emarenda.rbac.model.UserCsvDto;
+import com.jamapi.emarenda.rbac.model.UserDto;
+import com.jamapi.emarenda.rbac.model.UserModel;
 import com.jamapi.emarenda.rbac.service.UserService;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
@@ -17,9 +21,11 @@ import java.util.stream.Collectors;
 @Service
 public class CsvReaderService {
     private final UserService userService;
+    private final ParentChildService parentChildService;
 
-    public CsvReaderService(UserService userService) {
+    public CsvReaderService(UserService userService, ParentChildService parentChildService) {
         this.userService = userService;
+        this.parentChildService = parentChildService;
     }
 
     public String readUsersFromCsv(MultipartFile file) {
@@ -29,18 +35,35 @@ public class CsvReaderService {
                     .withIgnoreLeadingWhiteSpace(true)
                     .build();
 
-            List<UserCsvDto> userDtos = csvToBean.parse().stream()
+            // get all users
+            List<UserCsvDto> userCsvDto = csvToBean.parse().stream()
                     .map(UserCsvModel::toUserCsvDto)
                     .toList();
-            // TODO get child oibs from parrent
-            //  get child where oib is
-            //  save parents(users)
-            //  save parent child
-//            userDtos.forEach(userService::saveUser);
+            // map them into users dto to save them as entities
+            List<UserDto> userDtos = userCsvDto.stream()
+                    .map(UserCsvDto::toUserDto)
+                    .toList();
+            // save entities
+            userDtos.forEach(userService::saveUser);
+
+            saveParentChildRelationship(userCsvDto);
 
             return "CSV values are saved.";
         } catch (Exception e) {
             throw new CsvProcessingException("Error reading CSV file: " + e.getMessage(), e);
         }
+    }
+
+    private void saveParentChildRelationship(List<UserCsvDto> userCsvDto) {
+        // filter out that ones that has set of child oibs
+        List<UserCsvDto> u = userCsvDto
+                .stream()
+                .filter(userCsvDto1 -> !userCsvDto1.getChildOib().isEmpty())
+                .toList();
+        // find those with oibs
+        UserModel userModel = userService.findByOib("");
+
+        // TODO save parents and child relationship
+        parentChildService.saveRelationship( new ParentChildModel());
     }
 }
