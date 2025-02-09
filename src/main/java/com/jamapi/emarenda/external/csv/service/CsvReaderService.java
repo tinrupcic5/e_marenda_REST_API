@@ -2,7 +2,7 @@ package com.jamapi.emarenda.external.csv.service;
 
 import com.jamapi.emarenda.exception.CsvProcessingException;
 import com.jamapi.emarenda.external.csv.UserCsvModel;
-import com.jamapi.emarenda.rbac.model.UserDto;
+import com.jamapi.emarenda.rbac.model.UserCsvDto;
 import com.jamapi.emarenda.rbac.service.UserService;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
@@ -29,10 +29,14 @@ public class CsvReaderService {
                     .withIgnoreLeadingWhiteSpace(true)
                     .build();
 
-            List<UserDto> userDtos = csvToBean.parse().stream()
-                    .map(UserCsvModel::toUserDto)
+            List<UserCsvDto> userDtos = csvToBean.parse().stream()
+                    .map(UserCsvModel::toUserCsvDto)
                     .toList();
-            userDtos.forEach(userService::saveUser);
+            // TODO get child oibs from parrent
+            //  get child where oib is
+            //  save parents(users)
+            //  save parent child
+//            userDtos.forEach(userService::saveUser);
 
             return "CSV values are saved.";
         } catch (Exception e) {
