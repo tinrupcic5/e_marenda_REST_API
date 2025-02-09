@@ -21,8 +21,7 @@ public class ParentChildServiceImpl implements ParentChildService {
     }
 
     @Override
-    public String saveRelationship(ParentChildModel parentChildModel) {
-        ParentChildEntity parentChildResult =  parentChildRepository.save(parentChildModel);
-        return "Parent " + parentChildResult.getParent().getName() + " with child " + parentChildResult.getChild().getName() + " added successfully";
+    public void saveRelationship(ParentChildModel parentChildModel) {
+         parentChildRepository.save(parentChildModel);
     }
 }

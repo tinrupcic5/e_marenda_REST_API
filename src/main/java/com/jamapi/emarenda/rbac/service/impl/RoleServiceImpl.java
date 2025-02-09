@@ -5,6 +5,8 @@ import com.jamapi.emarenda.rbac.repository.RoleJpaRepository;
 import com.jamapi.emarenda.rbac.service.RoleService;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service(value = "roleService")
 public class RoleServiceImpl implements RoleService {
 
@@ -15,7 +17,7 @@ public class RoleServiceImpl implements RoleService {
   }
 
   @Override
-  public RoleEntity findByName(String name) {
+  public Optional<RoleEntity> findByName(String name) {
     return roleDao.findRoleByName(name);
   }
 }

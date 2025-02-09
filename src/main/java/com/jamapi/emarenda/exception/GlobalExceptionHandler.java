@@ -1,6 +1,7 @@
 package com.jamapi.emarenda.exception;
 
 import com.jamapi.emarenda.domain.response_message.ResponseMessage;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
@@ -59,6 +61,29 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST,
                 "CSV Processing Error: " + ex.getMessage());
         return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+    // Handle User not found Errors
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ResponseMessage> handleUserNotFoundException(UserNotFoundException ex) {
+        ResponseMessage response = new ResponseMessage(
+                HttpStatus.NOT_FOUND,
+                "User not found: " + ex.getMessage());
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+    // Handle Expired JWT Token Exception
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<ResponseMessage> handleExpiredJwtException(ExpiredJwtException ex) {
+        ResponseMessage response = new ResponseMessage(HttpStatus.UNAUTHORIZED, "Token has expired. Please log in again.");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
+    // Handle NoSuchElement Exception
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<ResponseMessage> handleNoSuchElementException(NoSuchElementException ex) {
+        ResponseMessage response = new ResponseMessage(HttpStatus.NOT_FOUND, "The requested resource was not found.");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
 }

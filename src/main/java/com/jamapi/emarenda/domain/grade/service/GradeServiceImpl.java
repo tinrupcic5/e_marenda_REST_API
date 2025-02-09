@@ -4,6 +4,8 @@ import com.jamapi.emarenda.domain.grade.entity.GradeEntity;
 import com.jamapi.emarenda.domain.grade.repository.GradeRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class GradeServiceImpl implements GradeService {
  private final GradeRepository gradeRepository;
@@ -13,7 +15,7 @@ public class GradeServiceImpl implements GradeService {
     }
 
     @Override
-    public GradeEntity findById(long schoolId) {
-        return gradeRepository.findById(schoolId).orElseThrow();
+    public Optional<GradeEntity> findById(Long gradeId) {
+        return gradeRepository.findById(gradeId);
     }
 }

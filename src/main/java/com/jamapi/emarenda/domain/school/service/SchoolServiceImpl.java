@@ -4,6 +4,8 @@ import com.jamapi.emarenda.domain.school.entity.SchoolEntity;
 import com.jamapi.emarenda.domain.school.repository.SchoolRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class SchoolServiceImpl implements SchoolService {
  private final SchoolRepository schoolRepository;
@@ -13,7 +15,9 @@ public class SchoolServiceImpl implements SchoolService {
     }
 
     @Override
-    public SchoolEntity findById(long schoolId) {
-        return schoolRepository.findById(schoolId).orElseThrow();
+    public Optional<SchoolEntity> findById(Long schoolId) {
+        return schoolRepository.findById(schoolId);
     }
+
+
 }

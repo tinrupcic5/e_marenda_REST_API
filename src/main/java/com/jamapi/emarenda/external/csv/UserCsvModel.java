@@ -1,7 +1,6 @@
 package com.jamapi.emarenda.external.csv;
 
 import com.jamapi.emarenda.rbac.model.UserCsvDto;
-import com.jamapi.emarenda.rbac.model.UserDto;
 import com.opencsv.bean.CsvBindByName;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,10 +38,10 @@ public class UserCsvModel {
     private String role;
 
     @CsvBindByName(column = "schoolId")
-    private long schoolId;
+    private Long schoolId;
 
     @CsvBindByName(column = "gradeId")
-    private long gradeId;
+    private Long gradeId;
 
     @CsvBindByName(column = "childOib")
     private String childOib;
@@ -63,13 +62,14 @@ public class UserCsvModel {
         );
     }
 
-//    username,password,email,phone,name,lastName,roles,schoolId,gradeId
-//    john_doe,pass123,john@example.com,1234567890,John,Doe,ADMIN,USER,1,2
-//    jane_doe,secure456,jane@example.com,0987654321,Jane,Doe,USER,2,3
-
     private Set<String> convertChild(String childOib) {
+        if (childOib == null || childOib.trim().isEmpty()) {
+            return Set.of();
+        }
         return Arrays.stream(childOib.split(","))
                 .map(String::trim)
+                .filter(s -> !s.isEmpty())
                 .collect(Collectors.toSet());
     }
+
 }

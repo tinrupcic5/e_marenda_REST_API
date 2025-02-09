@@ -14,7 +14,7 @@ public class SchoolRepositoryImpl implements SchoolRepository {
     }
 
     @Override
-    public Optional<SchoolEntity> findById(long schoolId) {
+    public Optional<SchoolEntity> findById(Long schoolId) {
         return schoolJpaRepository.findById(schoolId);
     }
 }

@@ -15,7 +15,7 @@ public class GradeRepositoryImpl implements GradeRepository {
     }
 
     @Override
-    public Optional<GradeEntity> findById(long gradeId) {
+    public Optional<GradeEntity> findById(Long gradeId) {
         return gradeJpaRepository.findById(gradeId);
     }
 }

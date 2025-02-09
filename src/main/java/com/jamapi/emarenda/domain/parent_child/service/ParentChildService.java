@@ -6,5 +6,5 @@ import java.util.Set;
 
 public interface ParentChildService {
     Set<ParentChildModel> findByParentId(long parentId);
-    String saveRelationship(ParentChildModel parentChildModel);
+    void saveRelationship(ParentChildModel parentChildModel);
 }

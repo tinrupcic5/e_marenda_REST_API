@@ -14,6 +14,7 @@ public class GradeMapper implements AbstractMapper<GradeModel, GradeEntity> {
 
     @Override
     public GradeModel toModel(GradeEntity entity) {
+        if (entity == null) return null;
         return new GradeModel(entity.getId(), entity.getName());
     }
 

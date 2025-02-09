@@ -20,8 +20,8 @@ public class UserDto {
   private String lastName;
   private String oib;
   private Set<String> roles;
-  private long schoolId;
-  private long gradeId;
+  private Long schoolId;
+  private Long gradeId;
 
   public UserEntity getUserFromDto() {
     UserEntity userEntity = new UserEntity();

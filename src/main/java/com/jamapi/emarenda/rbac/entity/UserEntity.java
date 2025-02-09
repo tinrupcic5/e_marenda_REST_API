@@ -11,6 +11,7 @@ import java.util.Set;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -41,6 +42,7 @@ public class UserEntity {
   @Column private String lastName;
 
   @Column(nullable = false, unique = true)
+  @Size(min = 11, max = 11, message = "OIB must be exactly 11 characters long")
   private String oib;
 
   public void setName(String name) {

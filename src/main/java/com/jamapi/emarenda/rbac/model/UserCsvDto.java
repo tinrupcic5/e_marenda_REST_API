@@ -12,6 +12,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class UserCsvDto {
 
+
   private String username;
   private String password;
   private String email;
@@ -20,8 +21,8 @@ public class UserCsvDto {
   private String lastName;
   private String oib;
   private Set<String> roles;
-  private long schoolId;
-  private long gradeId;
+  private Long schoolId;
+  private Long gradeId;
   private Set<String> childOib;
 
   public UserDto toUserDto() {

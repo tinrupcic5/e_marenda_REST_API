@@ -17,4 +17,5 @@ public interface UserService {
   UserEntity getCurrentUser();
 
   UserModel findByOib(String oib);
+
 }

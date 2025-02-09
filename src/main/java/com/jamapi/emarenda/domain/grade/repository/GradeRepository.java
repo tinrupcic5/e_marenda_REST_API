@@ -6,5 +6,5 @@ import com.jamapi.emarenda.domain.school.entity.SchoolEntity;
 import java.util.Optional;
 
 public interface GradeRepository {
-    Optional<GradeEntity> findById(long gradeId);
+    Optional<GradeEntity> findById(Long gradeId);
 }

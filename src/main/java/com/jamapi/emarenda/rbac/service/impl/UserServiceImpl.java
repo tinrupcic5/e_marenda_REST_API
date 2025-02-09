@@ -4,6 +4,7 @@ import com.jamapi.emarenda.domain.grade.entity.GradeEntity;
 import com.jamapi.emarenda.domain.grade.service.GradeService;
 import com.jamapi.emarenda.domain.school.entity.SchoolEntity;
 import com.jamapi.emarenda.domain.school.service.SchoolService;
+import com.jamapi.emarenda.exception.UserNotFoundException;
 import com.jamapi.emarenda.mapper.UserMapper;
 import com.jamapi.emarenda.rbac.entity.RoleEntity;
 import com.jamapi.emarenda.rbac.entity.UserEntity;
@@ -27,6 +28,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service(value = "userService")
 public class UserServiceImpl implements UserDetailsService, UserService {
@@ -91,11 +93,14 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         nUserEntity.setPassword(bcryptEncoder.encode(user.getPassword()));
 
         Set<RoleEntity> roleEntitySet = user.getRoles().stream()
-                .map(roleService::findByName)
+                .map(roleName -> roleService.findByName(roleName)
+                        .orElseThrow(() -> new NoSuchElementException("Role not found: " + roleName)))
                 .collect(Collectors.toSet());
 
-        SchoolEntity school = schoolService.findById(user.getSchoolId());
-        GradeEntity grade = gradeService.findById(user.getGradeId());
+        SchoolEntity school = schoolService.findById(user.getSchoolId())
+                .orElseThrow(() -> new NoSuchElementException("School not found with ID: " + user.getSchoolId()));
+
+        GradeEntity grade = gradeService.findById(user.getGradeId()).orElse(null);
 
         nUserEntity.setRoleEntities(roleEntitySet);
 
@@ -126,6 +131,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Override
     public UserModel findByOib(String oib) {
-        return userMapper.toModel(userJpaRepository.findByOib(oib).orElseThrow());
-    }
+        return userMapper.toModel(
+                userJpaRepository.findUserEntityByOib(oib)
+                        .orElseThrow(() -> new UserNotFoundException("User with OIB " + oib + " not found"))
+        );  }
 }
