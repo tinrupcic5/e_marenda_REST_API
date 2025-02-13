@@ -5,6 +5,7 @@ import com.jamapi.emarenda.rbac.model.UserDto;
 import com.jamapi.emarenda.rbac.model.UserModel;
 
 import java.util.List;
+import java.util.Set;
 
 public interface UserService {
 
@@ -17,5 +18,7 @@ public interface UserService {
   UserEntity getCurrentUser();
 
   UserModel findByOib(String oib);
+
+  Set<UserModel> findAllWhereUserIsStudent();
 
 }

@@ -135,4 +135,12 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                 userJpaRepository.findUserEntityByOib(oib)
                         .orElseThrow(() -> new UserNotFoundException("User with OIB " + oib + " not found"))
         );  }
+
+    @Override
+    public Set<UserModel> findAllWhereUserIsStudent() {
+        return userJpaRepository.findAllWhereUserIsStudent()
+                .stream()
+                .map(userMapper::toModel)
+                .collect(Collectors.toSet());
+    }
 }

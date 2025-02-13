@@ -5,6 +5,7 @@ import com.jamapi.emarenda.domain.lunch_attendance.repository.LunchAttendanceRep
 import com.jamapi.emarenda.domain.school_holiday.model.SchoolHolidayModel;
 import com.jamapi.emarenda.domain.school_holiday.service.SchoolHolidayService;
 import com.jamapi.emarenda.mapper.LunchAttendanceMapper;
+import com.jamapi.emarenda.utils.WeekendChecker;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -24,11 +25,11 @@ public class LunchAttendanceServiceImpl implements LunchAttendanceService {
     @Override
     public String saveLunchAttendance(LunchAttendanceDto lunchAttendanceDto) {
         Optional<SchoolHolidayModel> schoolHolidayModel = schoolHolidayService.findByNonWorkingDate(lunchAttendanceDto.getLunchDate());
-        if (schoolHolidayModel.isEmpty()) {
+        if (schoolHolidayModel.isEmpty() && !WeekendChecker.isTomorrowWeekend()) {
             lunchAttendanceMapper.toModel(lunchAttendanceRepository.saveLunchAttendance(lunchAttendanceDto));
             return "Lunch save for date: " + lunchAttendanceDto.getLunchDate();
         } else {
-            throw new IllegalStateException("Cannot save lunch attendance on a holiday: " + lunchAttendanceDto.getLunchDate());
+            throw new IllegalStateException("Cannot save lunch attendance for day: " + lunchAttendanceDto.getLunchDate());
         }
     }
 
