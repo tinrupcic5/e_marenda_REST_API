@@ -1,36 +1,34 @@
 package com.jamapi.emarenda.mapper;
 
 import com.jamapi.emarenda.domain.lunch_attendance.entity.LunchAttendanceEntity;
-import com.jamapi.emarenda.domain.lunch_attendance.model.LunchAttendanceModel;
+import com.jamapi.emarenda.domain.lunch_attendance.model.LunchAttendanceDto;
 import org.springframework.stereotype.Component;
 
 @Component
-public class LunchAttendanceMapper implements AbstractMapper<LunchAttendanceModel, LunchAttendanceEntity> {
+public class LunchAttendanceMapper implements AbstractMapper<LunchAttendanceDto, LunchAttendanceEntity> {
     private final UserMapper userMapper;
-    private final LunchDayMapper lunchDayMapper;
 
-    public LunchAttendanceMapper(UserMapper userMapper, LunchDayMapper lunchDayMapper) {
+    public LunchAttendanceMapper(UserMapper userMapper) {
         this.userMapper = userMapper;
-        this.lunchDayMapper = lunchDayMapper;
     }
 
     @Override
-    public LunchAttendanceModel toModel(LunchAttendanceEntity entity) {
-        return new LunchAttendanceModel(
+    public LunchAttendanceDto toModel(LunchAttendanceEntity entity) {
+        return new LunchAttendanceDto(
                 entity.getId(),
                 userMapper.toModel(entity.getUserEntity()),
-                lunchDayMapper.toModel(entity.getLunchDayEntity()),
+                entity.getLunchDate(),
                 entity.getStatus(),
                 entity.getComment()
         );
     }
 
     @Override
-    public LunchAttendanceEntity toEntity(LunchAttendanceModel model) {
+    public LunchAttendanceEntity toEntity(LunchAttendanceDto model) {
         return new LunchAttendanceEntity(
                 model.getId(),
                 userMapper.toEntity(model.getUser()),
-                lunchDayMapper.toEntity(model.getLunchDay()),
+                model.getLunchDate(),
                 model.getStatus(),
                 model.getComment()
         );

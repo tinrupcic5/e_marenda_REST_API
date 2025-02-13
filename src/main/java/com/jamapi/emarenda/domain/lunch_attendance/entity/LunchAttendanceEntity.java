@@ -1,13 +1,12 @@
 package com.jamapi.emarenda.domain.lunch_attendance.entity;
-import com.jamapi.emarenda.domain.lunch_day.entity.LunchDayEntity;
+
 import com.jamapi.emarenda.rbac.entity.UserEntity;
-import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -25,9 +24,8 @@ public class LunchAttendanceEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity userEntity;
 
-    @ManyToOne
-    @JoinColumn(name = "lunch_day_id", nullable = false)
-    private LunchDayEntity lunchDayEntity;
+    @Column(name = "lunch_date", nullable = false)
+    private LocalDate lunchDate;
 
     @Column(nullable = false)
     private Boolean status;

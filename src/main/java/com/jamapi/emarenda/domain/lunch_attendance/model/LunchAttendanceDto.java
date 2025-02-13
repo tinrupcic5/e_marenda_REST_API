@@ -1,21 +1,19 @@
 package com.jamapi.emarenda.domain.lunch_attendance.model;
 
-import com.jamapi.emarenda.domain.lunch_day.entity.LunchDayEntity;
-import com.jamapi.emarenda.domain.lunch_day.model.LunchDayModel;
-import com.jamapi.emarenda.rbac.entity.UserEntity;
 import com.jamapi.emarenda.rbac.model.UserModel;
-import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDate;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class LunchAttendanceModel {
+public class LunchAttendanceDto {
     private Long id;
     private UserModel user;
-    private LunchDayModel lunchDay;
+    private LocalDate lunchDate;
     private Boolean status;
     private String comment;
 }
