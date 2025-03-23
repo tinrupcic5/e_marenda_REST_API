@@ -3,6 +3,7 @@ package com.jamapi.emarenda.rbac.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jamapi.emarenda.domain.grade.entity.GradeEntity;
 import com.jamapi.emarenda.domain.school.entity.SchoolEntity;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.NonNullApi;
 
 @NoArgsConstructor
 @Data

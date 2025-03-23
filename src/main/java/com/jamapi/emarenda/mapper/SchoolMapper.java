@@ -11,6 +11,7 @@ public class SchoolMapper implements AbstractMapper<SchoolModel, SchoolEntity> {
 
     @Override
     public SchoolModel toModel(SchoolEntity entity) {
+        if (entity == null) return null;
         return new SchoolModel(
                 entity.getId(),
                 entity.getName(),

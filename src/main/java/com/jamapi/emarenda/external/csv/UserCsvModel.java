@@ -1,6 +1,7 @@
 package com.jamapi.emarenda.external.csv;
 
 import com.jamapi.emarenda.rbac.model.UserCsvDto;
+import com.jamapi.emarenda.rbac.model.UserModel;
 import com.opencsv.bean.CsvBindByName;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +12,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
-public class UserCsvModel {
+public class UserCsvModel extends UserModel {
 
     @CsvBindByName(column = "username")
     private String username;

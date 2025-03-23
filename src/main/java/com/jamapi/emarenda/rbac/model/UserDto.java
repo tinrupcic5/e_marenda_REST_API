@@ -1,6 +1,9 @@
 package com.jamapi.emarenda.rbac.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.jamapi.emarenda.external.csv.UserCsvModel;
 import com.jamapi.emarenda.rbac.entity.UserEntity;
+import com.jamapi.emarenda.rbac.validator.InputDataVisitor;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -34,5 +37,10 @@ public class UserDto {
     userEntity.setOib(oib);
 
     return userEntity;
+  }
+
+  @JsonIgnore
+  public <T extends UserDto> void accept(InputDataVisitor<T> visitor) {
+    visitor.accept((T) this);
   }
 }

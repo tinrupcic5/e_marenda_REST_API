@@ -49,7 +49,7 @@ public class WebSecurityConfig {
         .authorizeHttpRequests(
             authorizeRequests ->
                 authorizeRequests
-                    .requestMatchers("/users/authenticate", "/users/register")
+                    .requestMatchers("/users/authenticate", "/users/register", "/swagger-ui/**", "/swagger-ui.html")
                     .permitAll()
                     .anyRequest()
                     .authenticated())

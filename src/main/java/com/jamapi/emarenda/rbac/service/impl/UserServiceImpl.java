@@ -17,6 +17,7 @@ import com.jamapi.emarenda.rbac.service.UserService;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.jamapi.emarenda.rbac.validator.UserDtoValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -28,7 +29,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service(value = "userService")
 public class UserServiceImpl implements UserDetailsService, UserService {
@@ -48,14 +48,17 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     private final UserMapper userMapper;
 
+    private final UserDtoValidator userDtoValidator;
+
     public UserServiceImpl(
-            RoleService roleService, SchoolService schoolService, GradeService gradeService, UserJpaRepository userJpaRepository, BCryptPasswordEncoder bcryptEncoder, UserMapper userMapper) {
+            RoleService roleService, SchoolService schoolService, GradeService gradeService, UserJpaRepository userJpaRepository, BCryptPasswordEncoder bcryptEncoder, UserMapper userMapper, UserDtoValidator userDtoValidator) {
         this.roleService = roleService;
         this.schoolService = schoolService;
         this.gradeService = gradeService;
         this.userJpaRepository = userJpaRepository;
         this.bcryptEncoder = bcryptEncoder;
         this.userMapper = userMapper;
+        this.userDtoValidator = userDtoValidator;
     }
 
     @Override
@@ -88,7 +91,10 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Override
     public String saveUser(UserDto user) {
         LOGGER.info("Saving user: {}", user.getUsername());
-        UserEntity nUserEntity = user.getUserFromDto();
+
+        UserEntity userEntity = userJpaRepository.findUserEntityByOib(user.getOib()).orElse(null);
+
+        UserEntity nUserEntity = (userEntity != null) ? userEntity : user.getUserFromDto();
 
         nUserEntity.setPassword(bcryptEncoder.encode(user.getPassword()));
 
@@ -97,20 +103,24 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                         .orElseThrow(() -> new NoSuchElementException("Role not found: " + roleName)))
                 .collect(Collectors.toSet());
 
-        SchoolEntity school = schoolService.findById(user.getSchoolId())
-                .orElseThrow(() -> new NoSuchElementException("School not found with ID: " + user.getSchoolId()));
+        SchoolEntity school = (user.getSchoolId() == 0) ? null :
+                schoolService.findById(user.getSchoolId())
+                        .orElseThrow(() -> new NoSuchElementException("School not found with ID: " + user.getSchoolId()));
+
+        user.accept(userDtoValidator);
 
         GradeEntity grade = gradeService.findById(user.getGradeId()).orElse(null);
 
         nUserEntity.setRoleEntities(roleEntitySet);
-
         nUserEntity.setSchool(school);
         nUserEntity.setGrade(grade);
 
         userJpaRepository.save(nUserEntity);
-        LOGGER.info("User saved: {}", nUserEntity.getUsername());
-        return "User saved: " + nUserEntity.getUsername();
+
+        LOGGER.info("User {}: {}", (userEntity != null) ? "updated" : "created", nUserEntity.getUsername());
+        return "User " + ((userEntity != null) ? "updated: " : "created: ") + nUserEntity.getUsername();
     }
+
 
     @Override
     public UserEntity getCurrentUser() {

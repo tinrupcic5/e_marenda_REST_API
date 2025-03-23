@@ -1,7 +1,7 @@
 package com.jamapi.emarenda.exception;
 
-import com.jamapi.emarenda.domain.response_message.ResponseMessage;
 import io.jsonwebtoken.ExpiredJwtException;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -11,6 +11,10 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.io.IOException;
+import java.time.Instant;
+import java.util.Arrays;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
@@ -19,80 +23,79 @@ public class GlobalExceptionHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ResponseMessage> handleIllegalArgumentException(IllegalArgumentException ex) {
-        LOGGER.error("IllegalArgumentException: {}", ex.getMessage(), ex);
-        ResponseMessage response = new ResponseMessage(HttpStatus.BAD_REQUEST, ex.getMessage());
-        return ResponseEntity.status(response.getStatus()).body(response);
+    public ResponseEntity<IPErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), ex);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ResponseMessage> handleValidationException(MethodArgumentNotValidException ex) {
+    public ResponseEntity<IPErrorResponse> handleValidationException(MethodArgumentNotValidException ex) {
         String errorMessages = ex.getBindingResult().getFieldErrors().stream()
                 .map(error -> error.getField() + ": " + error.getDefaultMessage())
                 .collect(Collectors.joining(", "));
-
-        LOGGER.error("Validation Error: {}", errorMessages, ex);
-        ResponseMessage response = new ResponseMessage(HttpStatus.BAD_REQUEST, errorMessages);
-        return ResponseEntity.status(response.getStatus()).body(response);
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, errorMessages, ex);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ResponseMessage> handleGenericException(Exception ex) {
-        LOGGER.error("Unexpected Error: {}", ex.getMessage(), ex);
-        ResponseMessage response = new ResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
-        return ResponseEntity.status(response.getStatus()).body(response);
+    public ResponseEntity<IPErrorResponse> handleGenericException(Exception ex) {
+        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred.", ex);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ResponseMessage> handleAccessDeniedException(AccessDeniedException ex) {
-        LOGGER.warn("Access Denied: {}", ex.getMessage(), ex);
-        ResponseMessage response = new ResponseMessage(HttpStatus.FORBIDDEN, "You do not have permission to perform this action.");
-        return ResponseEntity.status(response.getStatus()).body(response);
+    public ResponseEntity<IPErrorResponse> handleAccessDeniedException(AccessDeniedException ex) {
+        return buildErrorResponse(HttpStatus.FORBIDDEN, "You do not have permission to perform this action.", ex);
     }
 
     @ExceptionHandler(BlacklistedTokenException.class)
-    public ResponseEntity<ResponseMessage> handleBlacklistedTokenException(BlacklistedTokenException ex) {
-        LOGGER.warn("Blacklisted Token: {}", ex.getMessage(), ex);
-        ResponseMessage response = new ResponseMessage(HttpStatus.UNAUTHORIZED, ex.getMessage());
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    public ResponseEntity<IPErrorResponse> handleBlacklistedTokenException(BlacklistedTokenException ex) {
+        return buildErrorResponse(HttpStatus.UNAUTHORIZED, ex.getMessage(), ex);
     }
 
     @ExceptionHandler(CsvProcessingException.class)
-    public ResponseEntity<ResponseMessage> handleCsvProcessingException(CsvProcessingException ex) {
-        LOGGER.error("CSV Processing Error: {}", ex.getMessage(), ex);
-        ResponseMessage response = new ResponseMessage(
-                HttpStatus.BAD_REQUEST,
-                "CSV Processing Error: " + ex.getMessage());
-        return ResponseEntity.status(response.getStatus()).body(response);
+    public ResponseEntity<IPErrorResponse> handleCsvProcessingException(CsvProcessingException ex) {
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, "CSV Processing Error: " + ex.getMessage(), ex);
     }
 
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ResponseMessage> handleUserNotFoundException(UserNotFoundException ex) {
-        LOGGER.warn("User Not Found: {}", ex.getMessage(), ex);
-        ResponseMessage response = new ResponseMessage(
-                HttpStatus.NOT_FOUND,
-                "User not found: " + ex.getMessage());
-        return ResponseEntity.status(response.getStatus()).body(response);
+    public ResponseEntity<IPErrorResponse> handleUserNotFoundException(UserNotFoundException ex) {
+        return buildErrorResponse(HttpStatus.NOT_FOUND, "User not found: " + ex.getMessage(), ex);
     }
 
     @ExceptionHandler(ExpiredJwtException.class)
-    public ResponseEntity<ResponseMessage> handleExpiredJwtException(ExpiredJwtException ex) {
-        LOGGER.warn("Expired JWT Token: {}", ex.getMessage(), ex);
-        ResponseMessage response = new ResponseMessage(HttpStatus.UNAUTHORIZED, "Token has expired. Please log in again.");
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    public ResponseEntity<IPErrorResponse> handleExpiredJwtException(ExpiredJwtException ex) {
+        return buildErrorResponse(HttpStatus.UNAUTHORIZED, "Token has expired. Please log in again.", ex);
+    }
+
+    @ExceptionHandler(IPExpiredJwtException.class)
+    public ResponseEntity<IPErrorResponse> handleIPExpiredJwtException(IPExpiredJwtException ex) {
+        LOGGER.error("IPExpiredJwtException caught: {}", ex.getMessage(), ex);
+        return buildErrorResponse(HttpStatus.UNAUTHORIZED, ex.getMessage(), ex);
     }
 
     @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<ResponseMessage> handleNoSuchElementException(NoSuchElementException ex) {
-        LOGGER.warn("No Such Element: {}", ex.getMessage(), ex);
-        ResponseMessage response = new ResponseMessage(HttpStatus.NOT_FOUND, "The requested resource was not found.");
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    public ResponseEntity<IPErrorResponse> handleNoSuchElementException(NoSuchElementException ex) {
+        return buildErrorResponse(HttpStatus.NOT_FOUND, "The requested resource was not found.", ex);
     }
 
     @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<ResponseMessage> handleIllegalStateException(IllegalStateException ex) {
-        LOGGER.error("Illegal State: {}", ex.getMessage(), ex);
-        ResponseMessage response = new ResponseMessage(HttpStatus.BAD_REQUEST, ex.getMessage());
-        return ResponseEntity.status(response.getStatus()).body(response);
+    public ResponseEntity<IPErrorResponse> handleIllegalStateException(IllegalStateException ex) {
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), ex);
+    }
+
+
+    private String formatStackTraceElement(StackTraceElement element) {
+        return String.format(
+                "{className: \"%s\", methodName: \"%s\", fileName: \"%s\", lineNumber: %d}",
+                element.getClassName(), element.getMethodName(), element.getFileName(), element.getLineNumber()
+        );
+    }
+
+    private ResponseEntity<IPErrorResponse> buildErrorResponse(HttpStatus status, String message, Throwable ex) {
+        List<String> stackTrace = Arrays.stream(ex.getStackTrace())
+                .limit(6)
+                .map(this::formatStackTraceElement)
+                .collect(Collectors.toList());
+
+        IPErrorResponse response = new IPErrorResponse(message, Instant.now().toString(), status, stackTrace);
+        return ResponseEntity.status(status).body(response);
     }
 }

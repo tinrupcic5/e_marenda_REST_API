@@ -8,6 +8,12 @@ import com.jamapi.emarenda.rbac.model.AuthToken;
 import com.jamapi.emarenda.rbac.model.LoginUser;
 import com.jamapi.emarenda.rbac.model.UserDto;
 import com.jamapi.emarenda.rbac.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 import java.util.List;
 
@@ -26,6 +32,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/users")
+@Tag(name = "User Management", description = "APIs for managing users, authentication, and authorization")
 public class UserController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
@@ -44,6 +51,11 @@ public class UserController {
         this.tokenBlacklistService = tokenBlacklistService;
     }
 
+    @Operation(summary = "Authenticate user", description = "Authenticates a user and returns a JWT token")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Successfully authenticated"),
+        @ApiResponse(responseCode = "401", description = "Invalid credentials")
+    })
     @PostMapping("/authenticate")
     public ResponseEntity<AuthToken> login(@RequestBody LoginUser loginUser)
             throws AuthenticationException {
@@ -58,6 +70,12 @@ public class UserController {
         return ResponseEntity.ok(new AuthToken(token));
     }
 
+    @Operation(summary = "Logout user", description = "Logs out the current user and invalidates their token")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Successfully logged out"),
+        @ApiResponse(responseCode = "401", description = "Not authenticated")
+    })
+    @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/logout")
     public ResponseEntity<ResponseMessage> logout(@RequestHeader("Authorization") String token) {
@@ -73,6 +91,13 @@ public class UserController {
         return ResponseEntity.ok(new ResponseMessage(HttpStatus.OK, "User logged out successfully."));
     }
 
+    @Operation(summary = "Create new user", description = "Creates a new user with specified roles and permissions")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "User created successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid input data"),
+        @ApiResponse(responseCode = "403", description = "Not authorized")
+    })
+    @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
     public ResponseEntity<ResponseMessage> createUser(@RequestBody UserDto user) {
@@ -86,6 +111,12 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage(HttpStatus.CREATED, message));
     }
 
+    @Operation(summary = "Get all users", description = "Retrieves a list of all users in the system")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Successfully retrieved users"),
+        @ApiResponse(responseCode = "403", description = "Not authorized")
+    })
+    @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('ADMIN') or hasRole('KITCHEN')")
     @GetMapping("/find/all")
     public List<UserEntity> getAllList() {
@@ -93,9 +124,16 @@ public class UserController {
         return userService.findAll();
     }
 
+    @Operation(summary = "Find user by username", description = "Retrieves a specific user by their username")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Successfully retrieved user"),
+        @ApiResponse(responseCode = "404", description = "User not found"),
+        @ApiResponse(responseCode = "403", description = "Not authorized")
+    })
+    @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('ADMIN') or hasRole('KITCHEN')")
     @GetMapping("/find/by/username")
-    public UserEntity findByUsername(@RequestParam String username) {
+    public UserEntity findByUsername(@Parameter(description = "Username to search for") @RequestParam String username) {
         LOGGER.info("Searching for user with username: {}", username);
         return userService.findByUsername(username);
     }
