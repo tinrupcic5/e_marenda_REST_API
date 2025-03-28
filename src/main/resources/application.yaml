@@ -44,3 +44,21 @@ jwt:
     string: ${HEADER_STRING}
   name:
     string: ${NAME_STRING}
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /api-docs
+    version: openapi_3_0
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+    tagsSorter: alpha
+    tryItOutEnabled: true
+    filter: true
+    urls:
+      - url: /api-docs
+        name: API Documentation
+  show-actuator: false
+  packages-to-scan: com.teapot.emarenda.rbac.controller,com.teapot.emarenda.controller
+  paths-to-match: /**

@@ -1,4 +1,0 @@
-package com.jamapi.emarenda.domain.student_meal_preference.repository;
-
-public interface StudentMealPreferanceRepository {
-}

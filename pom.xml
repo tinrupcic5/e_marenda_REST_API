@@ -8,7 +8,7 @@
 		<version>3.3.5</version>
 		<relativePath/>
 	</parent>
-	<groupId>com.jamapi</groupId>
+	<groupId>com.teapot</groupId>
 	<artifactId>emarenda</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>emarenda</name>
@@ -100,7 +100,12 @@
 			<artifactId>opencsv</artifactId>
 			<version>5.7.1</version>
 		</dependency>
-
+		<!-- SpringDoc OpenAPI UI -->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>2.3.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>
