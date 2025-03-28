@@ -206,4 +206,29 @@ public class UserController {
         LOGGER.info("Searching for user with username: {}", username);
         return userService.findByUsername(username);
     }
+
+    @Operation(
+        summary = "Get current user",
+        description = "Retrieves the details of the currently authenticated user based on their JWT token"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Successfully retrieved current user",
+            content = @Content(schema = @Schema(implementation = UserEntity.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Not authenticated or invalid token"
+        )
+    })
+    @SecurityRequirement(name = "bearerAuth")
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/me")
+    public ResponseEntity<UserEntity> getCurrentUser() {
+        LOGGER.info("Fetching current user details");
+        UserEntity currentUser = userService.getCurrentUser();
+        LOGGER.info("Successfully retrieved user details for: {}", currentUser.getUsername());
+        return ResponseEntity.ok(currentUser);
+    }
 }

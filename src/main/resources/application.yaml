@@ -25,6 +25,8 @@ logging:
 
 server:
   port: ${SERVER_PORT}
+  servlet:
+    context-path: /api
 
 scheduler:
   cron:

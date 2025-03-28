@@ -80,12 +80,24 @@ public class UserEntity {
   private Set<RoleEntity> roleEntities;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "school_id")
-  @Schema(description = "School associated with the user")
+  @JoinColumn(name = "school_id", nullable = true)
+  @Schema(description = "School associated with the user. Can be null for admin users.")
   private SchoolEntity school;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "grade_id")
   @Schema(description = "Grade associated with the user (if student)")
   private GradeEntity grade;
+
+  @PrePersist
+  @PreUpdate
+  public void validateSchoolAssignment() {
+    if (roleEntities != null) {
+      boolean isAdmin = roleEntities.stream()
+          .anyMatch(role -> "ADMIN".equals(role.getName()));
+      if (isAdmin && school != null) {
+        throw new IllegalStateException("Admin users cannot be assigned to a school");
+      }
+    }
+  }
 }
