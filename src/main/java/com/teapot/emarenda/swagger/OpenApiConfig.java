@@ -14,7 +14,7 @@ public class OpenApiConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Teapot API Documentation")
+                        .title("Emarenda API Documentation")
                         .version("1.0")
                         .description("API documentation for Teapot application")
                         .contact(new Contact()

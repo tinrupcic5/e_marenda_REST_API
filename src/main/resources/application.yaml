@@ -53,13 +53,13 @@ springdoc:
     path: /api-docs
     version: openapi_3_0
   swagger-ui:
-    path: /swagger-ui.html
+    path: /api/swagger-ui/index.html
     operationsSorter: method
     tagsSorter: alpha
     tryItOutEnabled: true
     filter: true
     urls:
-      - url: /api-docs
+      - url: /api/api-docs
         name: API Documentation
   show-actuator: false
   packages-to-scan: com.teapot.emarenda.rbac.controller,com.teapot.emarenda.controller
