@@ -1,4 +1,4 @@
-package com.teapot.emarenda.domain.lunch_attendance.model;
+package com.teapot.emarenda.domain.lunch_attendance.dto;
 
 import com.teapot.emarenda.rbac.model.UserModel;
 import lombok.*;

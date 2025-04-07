@@ -1,6 +1,6 @@
 package com.teapot.emarenda.domain.lunch_attendance.scheduler;
 
-import com.teapot.emarenda.domain.lunch_attendance.model.LunchAttendanceDto;
+import com.teapot.emarenda.domain.lunch_attendance.dto.LunchAttendanceDto;
 import com.teapot.emarenda.domain.lunch_attendance.service.LunchAttendanceService;
 import com.teapot.emarenda.rbac.service.UserService;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -26,7 +26,7 @@ public class LunchAttendanceScheduler {
             lunchAttendanceDto.setUser(student);
             lunchAttendanceDto.setStatus(true);
             lunchAttendanceDto.setLunchDate(LocalDate.now().plusDays(1));
-            lunchAttendanceService.saveLunchAttendance(lunchAttendanceDto);
+            lunchAttendanceService.save(lunchAttendanceDto);
         });
 
     }

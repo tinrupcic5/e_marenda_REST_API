@@ -1,36 +1,58 @@
 package com.teapot.emarenda.domain.lunch_attendance.service;
 
-import com.teapot.emarenda.domain.lunch_attendance.model.LunchAttendanceDto;
+import com.teapot.emarenda.domain.lunch_attendance.dto.LunchAttendanceDto;
 import com.teapot.emarenda.domain.lunch_attendance.repository.LunchAttendanceRepository;
-import com.teapot.emarenda.domain.school_holiday.model.SchoolHolidayModel;
-import com.teapot.emarenda.domain.school_holiday.service.SchoolHolidayService;
 import com.teapot.emarenda.mapper.LunchAttendanceMapper;
-import com.teapot.emarenda.utils.WeekendChecker;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class LunchAttendanceServiceImpl implements LunchAttendanceService {
     private final LunchAttendanceRepository lunchAttendanceRepository;
-    private final SchoolHolidayService schoolHolidayService;
     private final LunchAttendanceMapper lunchAttendanceMapper;
 
-    public LunchAttendanceServiceImpl(LunchAttendanceRepository lunchAttendanceRepository, SchoolHolidayService schoolHolidayService, LunchAttendanceMapper lunchAttendanceMapper) {
+    public LunchAttendanceServiceImpl(LunchAttendanceRepository lunchAttendanceRepository, LunchAttendanceMapper lunchAttendanceMapper) {
         this.lunchAttendanceRepository = lunchAttendanceRepository;
-        this.schoolHolidayService = schoolHolidayService;
         this.lunchAttendanceMapper = lunchAttendanceMapper;
     }
 
     @Override
-    public String saveLunchAttendance(LunchAttendanceDto lunchAttendanceDto) {
-        Optional<SchoolHolidayModel> schoolHolidayModel = schoolHolidayService.findByNonWorkingDate(lunchAttendanceDto.getLunchDate());
-        if (schoolHolidayModel.isEmpty() && !WeekendChecker.isTomorrowWeekend()) {
-            lunchAttendanceMapper.toModel(lunchAttendanceRepository.saveLunchAttendance(lunchAttendanceDto));
-            return "Lunch save for date: " + lunchAttendanceDto.getLunchDate();
-        } else {
-            throw new IllegalStateException("Cannot save lunch attendance for day: " + lunchAttendanceDto.getLunchDate());
-        }
+    public List<LunchAttendanceDto> findAllLunchAttendance() {
+        return lunchAttendanceMapper.toDtoList(lunchAttendanceRepository.findAll());
+    }
+
+    @Override
+    public List<LunchAttendanceDto> findByStudentId(Long studentId) {
+        return lunchAttendanceMapper.toDtoList(lunchAttendanceRepository.findByStudentId(studentId));
+    }
+
+    @Override
+    public List<LunchAttendanceDto> findByDate(LocalDate date) {
+        return lunchAttendanceMapper.toDtoList(lunchAttendanceRepository.findByDate(date));
+    }
+
+    @Override
+    public Optional<LunchAttendanceDto> findByStudentIdAndDate(Long studentId, LocalDate date) {
+        return lunchAttendanceRepository.findByStudentIdAndDate(studentId, date)
+                .map(lunchAttendanceMapper::toDto);
+    }
+
+    @Override
+    @Transactional
+    public LunchAttendanceDto save(LunchAttendanceDto attendance) {
+        return lunchAttendanceMapper.toDto(
+                lunchAttendanceRepository.save(lunchAttendanceMapper.toEntity(attendance))
+        );
+    }
+
+    @Override
+    @Transactional
+    public void deleteById(Long id) {
+        lunchAttendanceRepository.deleteById(id);
     }
 
 }

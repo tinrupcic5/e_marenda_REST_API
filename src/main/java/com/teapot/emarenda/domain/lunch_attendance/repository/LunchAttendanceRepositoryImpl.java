@@ -1,22 +1,50 @@
 package com.teapot.emarenda.domain.lunch_attendance.repository;
 
 import com.teapot.emarenda.domain.lunch_attendance.entity.LunchAttendanceEntity;
-import com.teapot.emarenda.domain.lunch_attendance.model.LunchAttendanceDto;
-import com.teapot.emarenda.mapper.LunchAttendanceMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class LunchAttendanceRepositoryImpl implements LunchAttendanceRepository {
     private final LunchAttendanceJpaRepository jpaRepository;
-    private final LunchAttendanceMapper mapper;
 
-    public LunchAttendanceRepositoryImpl(LunchAttendanceJpaRepository jpaRepository, LunchAttendanceMapper mapper) {
+    public LunchAttendanceRepositoryImpl(LunchAttendanceJpaRepository jpaRepository) {
         this.jpaRepository = jpaRepository;
-        this.mapper = mapper;
     }
 
     @Override
-    public LunchAttendanceEntity saveLunchAttendance(LunchAttendanceDto lunchAttendanceDto) {
-        return jpaRepository.save(mapper.toEntity(lunchAttendanceDto));
+    public List<LunchAttendanceEntity> findAll() {
+        return jpaRepository.findAll();
+    }
+
+    @Override
+    public List<LunchAttendanceEntity> findByStudentId(Long studentId) {
+        return jpaRepository.findByUserEntityId(studentId);
+    }
+
+    @Override
+    public List<LunchAttendanceEntity> findByDate(LocalDate date) {
+        return jpaRepository.findByLunchDate(date);
+    }
+
+    @Override
+    public Optional<LunchAttendanceEntity> findByStudentIdAndDate(Long studentId, LocalDate date) {
+        return jpaRepository.findByUserEntityIdAndLunchDate(studentId, date);
+    }
+
+    @Override
+    @Transactional
+    public LunchAttendanceEntity save(LunchAttendanceEntity attendance) {
+        return jpaRepository.save(attendance);
+    }
+
+    @Override
+    @Transactional
+    public void deleteById(Long id) {
+        jpaRepository.deleteById(id);
     }
 }

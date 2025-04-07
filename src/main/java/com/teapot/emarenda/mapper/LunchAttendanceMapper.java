@@ -1,36 +1,26 @@
 package com.teapot.emarenda.mapper;
 
+import com.teapot.emarenda.domain.lunch_attendance.dto.LunchAttendanceDto;
 import com.teapot.emarenda.domain.lunch_attendance.entity.LunchAttendanceEntity;
-import com.teapot.emarenda.domain.lunch_attendance.model.LunchAttendanceDto;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-@Component
-public class LunchAttendanceMapper implements AbstractMapper<LunchAttendanceDto, LunchAttendanceEntity> {
-    private final UserMapper userMapper;
+import java.util.List;
 
-    public LunchAttendanceMapper(UserMapper userMapper) {
-        this.userMapper = userMapper;
-    }
+@Mapper(componentModel = "spring")
+public interface LunchAttendanceMapper {
+    @Mapping(source = "userEntity.id", target = "user.id")
+    @Mapping(source = "lunchDate", target = "lunchDate")
+    @Mapping(source = "status", target = "status")
+    @Mapping(source = "comment", target = "comment")
+    LunchAttendanceDto toDto(LunchAttendanceEntity entity);
 
-    @Override
-    public LunchAttendanceDto toModel(LunchAttendanceEntity entity) {
-        return new LunchAttendanceDto(
-                entity.getId(),
-                userMapper.toModel(entity.getUserEntity()),
-                entity.getLunchDate(),
-                entity.getStatus(),
-                entity.getComment()
-        );
-    }
+    @Mapping(source = "user.id", target = "userEntity.id")
+    @Mapping(source = "lunchDate", target = "lunchDate")
+    @Mapping(source = "status", target = "status")
+    @Mapping(source = "comment", target = "comment")
+    LunchAttendanceEntity toEntity(LunchAttendanceDto dto);
 
-    @Override
-    public LunchAttendanceEntity toEntity(LunchAttendanceDto model) {
-        return new LunchAttendanceEntity(
-                model.getId(),
-                userMapper.toEntity(model.getUser()),
-                model.getLunchDate(),
-                model.getStatus(),
-                model.getComment()
-        );
-    }
+    List<LunchAttendanceDto> toDtoList(List<LunchAttendanceEntity> entities);
+    List<LunchAttendanceEntity> toEntityList(List<LunchAttendanceDto> dtos);
 }
